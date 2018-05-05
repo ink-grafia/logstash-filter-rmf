@@ -27,30 +27,28 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
   end # def register
 
   private
-  def iterate(event, level, path)
-    
-    # if !event.is_a?(::Hash)
-    #   hash = event.to_hash
-    # else
-    #   hash = event
-    # end
-    # @whitelist.each do |allowed|
-    #   hash.each do |k,v|
-    #     if v.is_a?(::Hash)
-    #       iterate(v)
-    #     else
-    #       @whitelist.each do |field|
-    #
-    #       end
-    #     end
-    #   end
-    # end
+  def iterate(event, hash, level, path)
+    hash.each do |k,v|
+      contains = false
+      @whitelist.each do |allowed|
+        if k == allowed[level]
+          contains = true
+        end
+      end
+      if contains
+        if v.is_a?(::Hash)
+          iterate(event, v, level+1, path + "[" + k.to_s + "]")
+        end
+        path = path[0..-2]
+      else
+        event.remove(path)
+      end
+    end
   end
 
   public
   def filter(event)
-
-    iterate(event)
+    iterate(event, event.to_hash, 0, "")
     # filter_matched should go in the last line of our successful code
     filter_matched(event)
   end # def filter
