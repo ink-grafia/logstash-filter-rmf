@@ -1,2 +1,2 @@
 # logstash-filter-rmf
-Allows to remove not whitelisted fields
+This is a Logstash filter plugin, that allows to remove not whitelisted fields
