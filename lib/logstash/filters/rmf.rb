@@ -6,14 +6,14 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
 
   config_name "rmf"
 
-  config :whitelist, :validate => :list
+  config :whitelist, :validate => :array
   
 
   public
   def register
     # set whitelist to an array of arrays each element of those are field
     # for example if we had ["a.a.a", "[b][c]"] we'll have [["a","a","a"]["b","c"]]
-    @whitelist.map! { |item| item.include? "[" ? item.split "][" : item.split "." }
+    @whitelist.map! { |item| item.include?("[") ? item.split("][") : item.split(".") }
     @whitelist.each do |item|
       if item.kind_of?(Array)
         if item[0].include? "["
