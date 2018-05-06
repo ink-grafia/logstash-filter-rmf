@@ -17,10 +17,10 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
     @whitelist.each do |item|
       if item.kind_of?(Array)
         if item[0].include? "["
-          item[0]=item[1..-1]
+          item[0]=item[0][1..-1]
         end
         if item[-1].include? "]"
-          item[-1]=item[0..-2]
+          item[-1]=item[-1][0..-2]
         end
       end
     end
@@ -33,15 +33,19 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
       @whitelist.each do |allowed|
         if k == allowed[level]
           contains = true
+          break
         end
       end
       if contains
         if v.is_a?(::Hash)
           iterate(event, v, level+1, path + "[" + k.to_s + "]")
+        else
+          path = "" # not sure it'll work
         end
-        path = path[0..-2]
       else
+        path += "["+k+"]"
         event.remove(path)
+        path = ""
       end
     end
   end
