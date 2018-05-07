@@ -29,30 +29,35 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
   private
   def iterate(event, hash, level, path)
     hash.each do |k,v|
+      tmp_path = path.clone + [k]
       contains = false
       @whitelist.each do |allowed|
         if k == allowed[level]
-          contains = true
+          (level).downto(0).each do |i|
+            if tmp_path[i] == allowed[i]
+              contains = true
+            end
+          end
           break
         end
       end
       if contains
         if v.is_a?(::Hash)
-          iterate(event, v, level+1, path + "[" + k.to_s + "]")
-        else
-          path = "" # not sure it'll work
+          iterate(event, v, level+1, tmp_path)
+        # else
+        #   tmp_path = []
         end
       else
-        path += "["+k+"]"
-        event.remove(path)
-        path = ""
+        tmp.map! {|item| "[" + item + "]"}
+        event.remove(tmp_path)
+        # tmp_path = []
       end
     end
   end
 
   public
   def filter(event)
-    iterate(event, event.to_hash, 0, "")
+    iterate(event, event.to_hash, 0, [])
     # filter_matched should go in the last line of our successful code
     filter_matched(event)
   end # def filter
