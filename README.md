@@ -10,7 +10,7 @@ rmf {
 }
 ```
 
-You can create pretty complex combination of subfields like:
+You can specify multiple subfields dividing them by | symbol and surrounding expression by optional square or round brackets. So you can create pretty complex combination of subfields like:
 
 ```ruby
 rmf {
@@ -18,5 +18,4 @@ rmf {
 }
 ```
 
-With this snippet of code will be created following whitelist: [a][b], [a][c], [a][d][g], [a][d][h], [a][d2][g], [a][d2][h].
-You can specify multiple subfields dividing them by | symbol and surrounding expression by optional square or round brackets. 
+With this snippet of code will be created following whitelist: [a][b], [a][c], [a][d][g], [a][d][h], [a][d2][g], [a][d2][h]. If this construction exists more then on one level, there will be each-with-each combination.
