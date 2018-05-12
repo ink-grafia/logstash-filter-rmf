@@ -29,6 +29,9 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
   private
   def iterate(event, hash, level, path)
     hash.each do |k,v|
+      if k[0] != '@'
+        next
+      end
       tmp_path = path.clone + [k]
       contains = -1
       @whitelist.each_with_index do |allowed, j|
@@ -44,12 +47,10 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
       if contains != -1
         if v.is_a?(::Hash)
           if level == @whitelist[contains].length-1
-            next;
+            next
           else
             iterate(event, v, level+1, tmp_path)
           end
-        # else
-        #   tmp_path = []
         end
       else
         tmp_path.map! {|item| "[" + item + "]"}
@@ -58,7 +59,6 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
           tmp += str
         end
         event.remove(tmp)
-        # tmp_path = []
       end
     end
   end
@@ -66,8 +66,6 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
   public
   def filter(event)
     iterate(event, event.to_hash, 0, [])
-    # event.remove("message")
-    # event.remove("foo")
     # filter_matched should go in the last line of our successful code
     filter_matched(event)
   end # def filter

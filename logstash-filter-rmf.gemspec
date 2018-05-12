@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'logstash-filter-rmf'
-  s.version       = '0.2.0'
+  s.version       = '1.0.0'
   s.licenses      = ['Apache-2.0']
   s.summary       = 'Allows to remove not whitelisted fields.'
   s.description   = 'This gem is a logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/logstash-plugin install gemname. This gem is not a stand-alone program.'
