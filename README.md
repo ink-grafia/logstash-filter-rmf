@@ -1,8 +1,8 @@
 # logstash-filter-rmf
 This is a Logstash filter plugin, that allows to remove not whitelisted fields
 
-## Using
-This plugin have only one field named "whitelist". As you can guess it stores array of allowed fields. All other fields, except for starting from _ (underscore) and @ (at) are deleted. Subfields can be specified in two ways: by dots or square brackets (like in example below).
+## Usage
+This plugin have only one field named "whitelist". As you can guess it stores array of strings, that represent allowed fields. All not specified fields, except for starting with _ (underscore) and @ (at) are deleted. Subfields can be indicated in two ways: by dots or square brackets (like in example below).
 
 ```ruby
 rmf {
@@ -14,8 +14,19 @@ You can specify multiple subfields dividing them by | symbol and surrounding exp
 
 ```ruby
 rmf {
-  "whitelist" => ["[a][b|c]", "a.(d|d2).g|h"]
+  "whitelist" => ["[first][second|other_second]", "start.(second_start|other_second_start).end|other_end"]
 }
 ```
 
-With this snippet of code will be created following whitelist: [a][b], [a][c], [a][d][g], [a][d][h], [a][d2][g], [a][d2][h]. If this construction exists more then on one level, there will be each-with-each combination.
+With this snippet of code will be created following whitelist: 
+
+```
+[first][second], 
+[first][other_second], 
+[start][second_start][end], 
+[start][other_second_start][other_end], 
+[start][second_start][end], 
+[start][other_second_start][other_end]. 
+```
+
+If this construction exists more then on one level, there will be each-with-each combination.
