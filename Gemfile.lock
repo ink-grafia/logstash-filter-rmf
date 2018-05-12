@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    logstash-filter-rmf (0.1.0)
-      logstash-core-plugin-api (~> 2.0)
+    logstash-filter-rmf (0.2.0)
+      logstash-core-plugin-api (~> 2.1.28)
 
 GEM
   remote: https://rubygems.org/

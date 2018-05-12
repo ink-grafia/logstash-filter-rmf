@@ -48,8 +48,12 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
         #   tmp_path = []
         end
       else
-        tmp.map! {|item| "[" + item + "]"}
-        event.remove(tmp_path)
+        tmp_path.map! {|item| "[" + item + "]"}
+        tmp = ""
+        tmp_path.each do |str|
+          tmp += str
+        end
+        event.remove(tmp)
         # tmp_path = []
       end
     end
@@ -58,6 +62,8 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
   public
   def filter(event)
     iterate(event, event.to_hash, 0, [])
+    # event.remove("message")
+    # event.remove("foo")
     # filter_matched should go in the last line of our successful code
     filter_matched(event)
   end # def filter
