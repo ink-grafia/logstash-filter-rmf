@@ -15,18 +15,16 @@ You can specify multiple subfields dividing them by | symbol and surrounding exp
 ```ruby
 rmf {
   "whitelist" => ["[first][second|other_second]", "start.(second_start|other_second_start).end|other_end"]
-}
+}```
 ```
 
 With this snippet of code will be created following whitelist: 
+- [first][second], 
+- [first][other_second], 
+- [start][second_start][end], 
+- [start][other_second_start][other_end], 
+- [start][second_start][end], 
+- [start][other_second_start][other_end]. 
 
-```
-[first][second], 
-[first][other_second], 
-[start][second_start][end], 
-[start][other_second_start][other_end], 
-[start][second_start][end], 
-[start][other_second_start][other_end]. 
-```
 
 If this construction exists more then on one level, there will be each-with-each combination.
