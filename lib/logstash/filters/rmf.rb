@@ -31,7 +31,7 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
   private
   def iterate(event, hash, level, path)
     hash.each do |k,v|
-      if k[0] != '@'
+      if k[0] == '@' || k[0] == '_'
         next
       end
       tmp_path = path.clone + [k]
