@@ -30,20 +30,24 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
   def iterate(event, hash, level, path)
     hash.each do |k,v|
       tmp_path = path.clone + [k]
-      contains = false
-      @whitelist.each do |allowed|
+      contains = -1
+      @whitelist.each_with_index do |allowed, j|
         if k == allowed[level]
           (level).downto(0).each do |i|
             if tmp_path[i] == allowed[i]
-              contains = true
+              contains = j
             end
           end
           break
         end
       end
-      if contains
+      if contains != -1
         if v.is_a?(::Hash)
-          iterate(event, v, level+1, tmp_path)
+          if level == @whitelist[contains].length-1
+            next;
+          else
+            iterate(event, v, level+1, tmp_path)
+          end
         # else
         #   tmp_path = []
         end
