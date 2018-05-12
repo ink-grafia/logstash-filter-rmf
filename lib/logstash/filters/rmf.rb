@@ -16,13 +16,25 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
     @whitelist.map! {
         |item| item.include?('[') ? item.split('][') : item.split('.')
     }
-    @whitelist.each do |item|
+    @whitelist.each_with_index do |item, i|
       if item.kind_of?(Array)
         if item[0].include? '['
           item[0]=item[0][1..-1]
         end
         if item[-1].include? ']'
           item[-1]=item[-1][0..-2]
+        end
+        item.each_with_index do |ele, j|
+          if ele.include?('(')
+            ele[1..-2].split('|').each do |el|
+              if @whitelist[i].length >= j+1
+                @whitelist += [@whitelist[i][0..j-1] + [el] + @whitelist[i][j+1..-1]]
+              else
+                @whitelist += [@whitelist[i][0..j-1] + [el]]
+              end
+            end
+            @whitelist.delete(item)
+          end
         end
       end
     end
