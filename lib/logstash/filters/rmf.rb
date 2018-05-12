@@ -14,9 +14,9 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
     # set whitelist to an array of arrays each element of those are field
     # for example if we had ["a.a.a", "[b][c]"] we'll have [["a","a","a"]["b","c"]]
     @whitelist.map! {
-        |item| item.include?('[') ? item.split('][') : item.split('.')
+        |item| item.include?(".") ? item.split(".") : item.split("][")
     }
-    @whitelist.each_with_index do |item, i|
+    @whitelist.each do |item|
       if item.kind_of?(Array)
         if item[0].include? '['
           item[0]=item[0][1..-1]
@@ -24,17 +24,30 @@ class LogStash::Filters::Rmf < LogStash::Filters::Base
         if item[-1].include? ']'
           item[-1]=item[-1][0..-2]
         end
-        item.each_with_index do |ele, j|
-          if ele.include?('(')
-            ele[1..-2].split('|').each do |el|
-              if @whitelist[i].length >= j+1
-                @whitelist += [@whitelist[i][0..j-1] + [el] + @whitelist[i][j+1..-1]]
-              else
-                @whitelist += [@whitelist[i][0..j-1] + [el]]
-              end
-            end
-            @whitelist.delete(item)
+        item.each_with_index do |_, j|
+          make_level j
+        end
+      end
+    end
+  end
+
+  def make_level(level)
+    @whitelist.each_with_index do |item, i|
+      if item.kind_of?(Array)
+        if item[level] != nil && item[level].include?('|')
+          if item[level][0] == '(' || item[level][0] == '['
+            item[level] = item[level][1..-2]
           end
+          item[level].split('|').each do |el|
+            if level == 0
+              @whitelist += [[el] + item[1..-1]]
+            elsif @whitelist[i].length >= level+1
+              @whitelist += [item[0..level-1] + [el] + item[level+1..-1]]
+            else
+              @whitelist += [item[i][0..level-1] + [el]]
+            end
+          end
+          @whitelist.delete(item)
         end
       end
     end
