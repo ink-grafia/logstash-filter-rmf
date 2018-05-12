@@ -15,7 +15,7 @@ You can specify multiple subfields dividing them by | symbol and surrounding exp
 ```ruby
 rmf {
   "whitelist" => ["[first][second|other_second]", "start.(second_start|other_second_start).end|other_end"]
-}```
+}
 ```
 
 With this snippet of code will be created following whitelist: 
